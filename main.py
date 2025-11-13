@@ -1,5 +1,6 @@
 
 import pickle
+import time
 
 ''' Funcao de Leitura de Arquivos '''
 def ler_dados(arquivo):
@@ -9,6 +10,7 @@ def ler_dados(arquivo):
         alunos = pickle.load(f)
     return tipos,pontos, alunos
 
+''' Funcao para Saída dos Arquivos '''
 def gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, arquivo_saida):
     with open(arquivo_saida, 'w') as f:
         mat_anterior = None
@@ -24,7 +26,6 @@ def gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, arquivo_saida):
             pontos_atividade = unidades * pontos_unidade
 
             f.write(f"{tipo}.{codigo} {nome_atividade} : {unidades}x{pontos_unidade}={pontos_atividade}\n")
-
 
 ''' Funcao de Criacao da lista de tuplas de matricula e cadastro de atividades '''
 def criar_lista_atividades(alunos):
@@ -109,18 +110,48 @@ def comparar(tupla1,tupla2,alunos,pontos,qtd_tipos):
     return 0
 
 
+''' ============ Merge Sort ================== '''
+
+def merge(esq, dir, alunos, pontos, qtd_tipos):
+    resultado = []
+    i = j = 0
+    
+    while i < len(esq) and j < len(dir):
+        if comparar(esq[i], dir[j], alunos, pontos, qtd_tipos) <= 0:
+            resultado.append(esq[i])
+            i += 1
+        else:
+            resultado.append(dir[j])
+            j += 1
+    
+    resultado.extend(esq[i:])
+    
+    resultado.extend(dir[j:])
+    
+    return resultado
+
+
+def merge_sort(lista, alunos, pontos, qtd_tipos):
+    if len(lista) <= 1:
+        return lista
+    
+    meio = len(lista) // 2
+    
+    esquerda = merge_sort(lista[:meio], alunos, pontos, qtd_tipos)
+    direita = merge_sort(lista[meio:], alunos, pontos, qtd_tipos)
+    
+    return merge(esquerda, direita, alunos, pontos, qtd_tipos)
 
 ''' ============ Funcao Principal ============ '''
 def main():
-    tipos,pontos,alunos  = ler_dados("entrada1.bin")
+
+    tipos,pontos,alunos  = ler_dados("entrada4.bin")
     
     qtd_tipos = len(tipos)
     
     lista = criar_lista_atividades(alunos)
-    lista_ordenada = quick_sort(lista, alunos, pontos, qtd_tipos)
+    lista_ordenada = merge_sort(lista, alunos, pontos, qtd_tipos)
 
-    gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, 'saida.txt')
-
-
+    gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, 'saida4.txt')
 
 main()
