@@ -18,14 +18,14 @@ def gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, arquivo_saida):
             if mat_anterior != mat:
                 nome = alunos[mat][0]
                 total_pontos = calcular_pontos_aluno(mat, alunos, pontos, qtd_tipos)
-                f.write(f"{nome} ({mat}) : {total_pontos} pontos \n")
+                f.write(f"{nome} ({mat}): {total_pontos} pontos \n")
                 mat_anterior = mat
         
             tipo, codigo, unidades = alunos[mat][1][ind]
             nome_atividade, pontos_unidade, _ = pontos[(tipo, codigo)]
             pontos_atividade = unidades * pontos_unidade
 
-            f.write(f"{tipo}.{codigo} {nome_atividade} : {unidades}x{pontos_unidade}={pontos_atividade}\n")
+            f.write(f"\t {tipo}.{codigo} {nome_atividade}: {unidades}x{pontos_unidade}={pontos_atividade}\n")
 
 ''' Funcao de Criacao da lista de tuplas de matricula e cadastro de atividades '''
 def criar_lista_atividades(alunos):
@@ -132,14 +132,14 @@ def merge(l, lEsq, lDir, alunos, pontos, qtd_tipos):
 def main():
 
     t1 = time.process_time()
-    tipos,pontos,alunos  = ler_dados("entrada4.bin")
+    tipos,pontos,alunos  = ler_dados("entrada1.bin")
     
     qtd_tipos = len(tipos)
     
     lista = criar_lista_atividades(alunos)
     msort(lista, alunos, pontos, qtd_tipos)
 
-    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida4.txt')
+    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida1.txt')
     t2 = time.process_time()
 
     print(t2 - t1)
