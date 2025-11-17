@@ -52,33 +52,6 @@ def calcular_pontos_aluno(matricula, alunos, pontos, qtd_tipos):
 
     return 15 if total > 15 else total
 
-def quick_sort(lista,alunos,pontos,qtd_tipos):
-    if len(lista) <= 1:
-        return lista
-    
-    quick_sort_rec(lista,0,len(lista)-1,alunos,pontos,qtd_tipos)
-    return lista
-
-def quick_sort_rec(lista,inicio,fim,alunos,pontos,qtd_tipos):
-    if inicio < fim:
-        indice_pivo = particionar(lista, inicio, fim, alunos, pontos, qtd_tipos)
-        quick_sort_rec(lista, inicio, indice_pivo-1, alunos, pontos, qtd_tipos)
-        quick_sort_rec(lista, indice_pivo+1, fim, alunos, pontos, qtd_tipos)
-
-def particionar(lista,inicio,fim,alunos,pontos,qtd_tipos):
-    meio = (inicio+fim)//2
-    lista[meio], lista[fim] = lista[fim], lista[meio]
-    pivo = lista[fim]
-    i = inicio - 1
-    for j in range(inicio,fim):
-        if comparar(lista[j],pivo,alunos,pontos,qtd_tipos) <= 0:
-            i += 1
-            lista[i], lista[j] = lista[j], lista[i]
-    
-    lista[i+1], lista[fim] = lista[fim], lista[i+1]
-
-    return i+1
-
 def comparar(tupla1,tupla2,alunos,pontos,qtd_tipos):
     mat1, ind1 = tupla1
     mat2, ind2 = tupla2
@@ -88,70 +61,72 @@ def comparar(tupla1,tupla2,alunos,pontos,qtd_tipos):
         tipo2, cod2, _ = alunos[mat2][1][ind2]
 
         if tipo1 != tipo2:
-            return -1 if tipo1 < tipo2 else 1
-        return -1 if cod1 < cod2 else (1 if cod1 > cod2 else 0)
+            return tipo1 < tipo2
+        return cod1 <= cod2
 
     pts1 = calcular_pontos_aluno(mat1, alunos, pontos, qtd_tipos)
     pts2 = calcular_pontos_aluno(mat2, alunos, pontos, qtd_tipos)
 
     if pts1 != pts2:
-        return -1 if pts1 > pts2 else 1
+         return pts1 > pts2
     
     nome1 = alunos[mat1][0]
     nome2 = alunos[mat2][0]
 
     if nome1 != nome2:
-        return -1 if nome1 < nome2 else 1
+        return nome1 < nome2
     
     if mat1 != mat2:
-        return -1 if mat1 < mat2 else 1
+        return mat1 < mat2
     
     atividades1 = alunos[mat1][1][ind1]
-    atividades2 = alunos[mat1][1][ind2]
+    atividades2 = alunos[mat2][1][ind2]
 
     tipo1, cod1, _ = atividades1
     tipo2, cod2, _ = atividades2
 
     if tipo1 != tipo2:
-        return -1 if tipo1 < tipo2 else 1
+        return tipo1 < tipo2
     
-    # if cod1 != cod2:
-    #     return -1 if cod1 < cod2 else 1
-
-    return -1 if cod1 < cod2 else (1 if cod1 > cod2 else 0)
+    return cod1 <= cod2
 
 
 ''' ============ Merge Sort ================== '''
 
-def merge(esq, dir, alunos, pontos, qtd_tipos):
-    resultado = []
-    i = j = 0
+def msort(lista, alunos, pontos, qtd_tipos):
+    if len(lista) > 1:
+        meio = len(lista) // 2
+        lEsq = lista[:meio]
+        lDir = lista[meio:]
+        
+        msort(lEsq, alunos, pontos, qtd_tipos)
+        msort(lDir, alunos, pontos, qtd_tipos)
+        
+        merge(lista, lEsq, lDir, alunos, pontos, qtd_tipos)	
+
+def merge(l, lEsq, lDir, alunos, pontos, qtd_tipos):
+    i = 0
+    j = 0
+    k = 0
     
-    while i < len(esq) and j < len(dir):
-        if comparar(esq[i], dir[j], alunos, pontos, qtd_tipos) <= 0:
-            resultado.append(esq[i])
+    while i<len(lEsq) and j<len(lDir):
+        if comparar(lEsq[i], lDir[j], alunos, pontos, qtd_tipos):
+            l[k] = lEsq[i]
             i += 1
         else:
-            resultado.append(dir[j])
+            l[k] = lDir[j]
             j += 1
+        k += 1
     
-    resultado.extend(esq[i:])
-    
-    resultado.extend(dir[j:])
-    
-    return resultado
-
-
-def merge_sort(lista, alunos, pontos, qtd_tipos):
-    if len(lista) <= 1:
-        return lista
-    
-    meio = len(lista) // 2
-    
-    esquerda = merge_sort(lista[:meio], alunos, pontos, qtd_tipos)
-    direita = merge_sort(lista[meio:], alunos, pontos, qtd_tipos)
-    
-    return merge(esquerda, direita, alunos, pontos, qtd_tipos)
+    while i < len(lEsq):
+        l[k] = lEsq[i]
+        i += 1
+        k += 1
+        
+    while j < len(lDir):
+        l[k] = lDir[j]
+        j += 1
+        k += 1
 
 ''' ============ Funcao Principal ============ '''
 def main():
@@ -162,9 +137,9 @@ def main():
     qtd_tipos = len(tipos)
     
     lista = criar_lista_atividades(alunos)
-    lista_ordenada = merge_sort(lista, alunos, pontos, qtd_tipos)
+    msort(lista, alunos, pontos, qtd_tipos)
 
-    gerar_saida(lista_ordenada, alunos, pontos, qtd_tipos, 'saida4.txt')
+    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida4.txt')
     t2 = time.process_time()
 
     print(t2 - t1)
