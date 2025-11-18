@@ -179,7 +179,7 @@ def msort_iterativo(lista, aux, alunos, pontos, qtd_tipos):
 def main():
 
     # t1 = time.process_time()
-    tipos,pontos,alunos  = ler_dados("entrada4.bin")
+    tipos,pontos,alunos  = ler_dados("entrada.bin")
     
     qtd_tipos = len(tipos)
     
@@ -191,7 +191,7 @@ def main():
     merge_sort(lista, aux, 0, N - 1, alunos, pontos, qtd_tipos)
     # msort_iterativo(lista, aux, alunos, pontos, qtd_tipos)
 
-    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida4.txt')
+    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida.txt')
     # t2 = time.process_time()
 
     # print(t2 - t1)
