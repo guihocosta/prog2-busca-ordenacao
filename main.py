@@ -128,20 +128,64 @@ def merge(l, lEsq, lDir, alunos, pontos, qtd_tipos):
         j += 1
         k += 1
 
+''' ============ Merge Sort Iterativo ================== '''
+
+def merge_iterativo(lista, inicio, meio, fim, alunos, pontos, qtd_tipos):
+    lEsq = lista[inicio:meio]
+    lDir = lista[meio:fim]
+    
+    i = 0 
+    j = 0 
+    k = inicio 
+
+    while i < len(lEsq) and j < len(lDir):
+        if comparar(lEsq[i], lDir[j], alunos, pontos, qtd_tipos):
+            lista[k] = lEsq[i]
+            i += 1
+        else:
+            lista[k] = lDir[j]
+            j += 1
+        k += 1
+
+    while i < len(lEsq):
+        lista[k] = lEsq[i]
+        i += 1
+        k += 1
+
+    while j < len(lDir):
+        lista[k] = lDir[j]
+        j += 1
+        k += 1
+
+def msort_iterativo(lista, alunos, pontos, qtd_tipos):
+    N = len(lista)
+    tamanho_sublista = 1
+    
+    while tamanho_sublista < N:
+        for i in range(0, N, 2 * tamanho_sublista):
+            inicio = i
+            meio = min(i + tamanho_sublista, N)
+            fim = min(i + 2 * tamanho_sublista, N)
+            
+            if meio < fim:
+                merge_iterativo(lista, inicio, meio, fim, alunos, pontos, qtd_tipos)
+            
+        tamanho_sublista *= 2
+
 ''' ============ Funcao Principal ============ '''
 def main():
 
     t1 = time.process_time()
-    tipos,pontos,alunos  = ler_dados("entrada1.bin")
+    tipos,pontos,alunos  = ler_dados("entrada4.bin")
     
     qtd_tipos = len(tipos)
     
     lista = criar_lista_atividades(alunos)
-    msort(lista, alunos, pontos, qtd_tipos)
+    msort_iterativo(lista, alunos, pontos, qtd_tipos)
 
-    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida1.txt')
+    gerar_saida(lista, alunos, pontos, qtd_tipos, 'saida4.txt')
     t2 = time.process_time()
 
     print(t2 - t1)
-
+    
 main()
